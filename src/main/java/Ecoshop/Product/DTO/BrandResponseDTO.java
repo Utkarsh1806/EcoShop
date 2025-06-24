@@ -3,6 +3,8 @@ package Ecoshop.Product.DTO;
 
 import lombok.*;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @Builder
@@ -13,4 +15,5 @@ public class BrandResponseDTO {
     private String name;
     private String logoUrl;
     private String description;
+    private Set<ProductResponseDTO> products;
 }

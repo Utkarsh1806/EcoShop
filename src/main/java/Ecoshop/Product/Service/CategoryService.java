@@ -1,23 +1,22 @@
 package Ecoshop.Product.Service;
 
-import Ecoshop.Product.DTO.BrandRequestDTO;
-import Ecoshop.Product.DTO.BrandResponseDTO;
-import Ecoshop.Product.DTO.CategoryRequestDTO;
-import Ecoshop.Product.DTO.CategoryResponseDTO;
+import Ecoshop.Exceptions.ResourceAlreadyExistException;
+import Ecoshop.Exceptions.ResourceNotFoundException;
+import Ecoshop.Product.DTO.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+
 public interface CategoryService {
 
-    CategoryResponseDTO create(CategoryRequestDTO categoryRequestDTO);
+    CategoryResponseDTO create(CategoryRequestDTO categoryRequestDTO) throws ResourceAlreadyExistException, ResourceNotFoundException;
 
-    CategoryResponseDTO updateCategory(Long id, CategoryRequestDTO categoryRequestDTO);
+    CategoryResponseDTO updateCategory(Long id, CategoryRequestDTO categoryRequestDTO) throws ResourceNotFoundException;
 
-    List<CategoryResponseDTO> getAll();
+    PagedResponse<CategoryResponseDTO> getAll(int page, int size);
 
-    CategoryResponseDTO getCategory(Long id);
+    CategoryResponseDTO getCategory(Long id) throws ResourceNotFoundException;
 
-    CategoryResponseDTO delete(Long id);
+    CategoryResponseDTO delete(Long id) throws ResourceNotFoundException;
 }

@@ -1,5 +1,6 @@
 package Ecoshop.User.Entity;
 
+import Ecoshop.Cart.Entity.Cart;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,4 +38,7 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserProfile profile;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Cart cart;
 }

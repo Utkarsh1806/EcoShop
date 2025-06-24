@@ -4,13 +4,17 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductResponseDTO {
     private Long id;
     private String name;
     private String description;
-    private BigDecimal price;
-    private BigDecimal discountPrice;
+    private Double price;
+    private Double discountPrice;
     private String unit;
     private Integer stockQuantity;
     private Boolean inStock;

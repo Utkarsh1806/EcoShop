@@ -2,11 +2,17 @@ package Ecoshop.Product.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Accessors(chain = true)
 @Table(name = "product")
 public class Product {
     @Id
@@ -19,9 +25,9 @@ public class Product {
     private String description;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private Double price;
 
-    private BigDecimal discountPrice;
+    private Double discountPrice;
 
     @Column(nullable = false)
     private String unit;

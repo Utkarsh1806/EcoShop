@@ -1,7 +1,10 @@
 package Ecoshop.Product.Controller;
 
+import Ecoshop.Exceptions.ResourceAlreadyExistException;
+import Ecoshop.Exceptions.ResourceNotFoundException;
 import Ecoshop.Product.DTO.BrandRequestDTO;
 import Ecoshop.Product.DTO.BrandResponseDTO;
+import Ecoshop.Product.DTO.PagedResponse;
 import Ecoshop.Product.Entity.Product;
 import Ecoshop.Product.Service.BrandService;
 import org.springframework.http.ResponseEntity;
@@ -20,27 +23,27 @@ public class BrandController {
     }
 
     @PostMapping
-    public ResponseEntity<BrandResponseDTO> createBrand(@RequestBody BrandRequestDTO brandRequestDTO) {
+    public ResponseEntity<BrandResponseDTO> createBrand(@RequestBody BrandRequestDTO brandRequestDTO) throws ResourceAlreadyExistException, ResourceNotFoundException {
         return ResponseEntity.ok(brandService.create(brandRequestDTO));
     }
 
-    @PutMapping("{/id}")
-    public ResponseEntity<BrandResponseDTO> updateBrand(@PathVariable Long id, @RequestBody BrandRequestDTO brandRequestDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<BrandResponseDTO> updateBrand(@PathVariable Long id, @RequestBody BrandRequestDTO brandRequestDTO) throws ResourceAlreadyExistException, ResourceNotFoundException {
         return ResponseEntity.ok(brandService.updateBrand(id, brandRequestDTO));
     }
 
     @GetMapping
-    public ResponseEntity<List<BrandResponseDTO>> getAllBrands() {
-        return ResponseEntity.ok(brandService.getAll());
+    public ResponseEntity<PagedResponse<BrandResponseDTO>> getAllBrands(@RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok(brandService.getAll(page,size));
     }
 
-    @GetMapping("{/id")
-    public ResponseEntity<BrandResponseDTO> getBrand(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<BrandResponseDTO> getBrand(@PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(brandService.getBrand(id));
     }
 
-    @DeleteMapping("{/id}")
-    public ResponseEntity<BrandResponseDTO> deleteBrand(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BrandResponseDTO> deleteBrand(@PathVariable Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(brandService.delete(id));
     }
 }

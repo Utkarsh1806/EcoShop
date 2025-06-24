@@ -15,9 +15,8 @@ public class CategoryResponseDTO {
     private String name;
     private String iconUrl;
     private String description;
-
     private Long parentCategoryId;
     private String parentCategoryName;
-
-    private List<SubCategoryDTO> subCategories;
+    private Set<SubCategoryDTO> subCategories;
+    private Set<ProductResponseDTO> products;
 }
