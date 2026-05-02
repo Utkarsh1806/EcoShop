@@ -1,8 +1,6 @@
 # EcoShop — E-Commerce Microservices Platform
 
-**15 of 22 services deeply implemented.** Marketplace, returns, fraud, reviews, and admin tooling now layer on top of the v2 core.
 
----
 
 ## Status
 
@@ -26,10 +24,6 @@
 | **`seller-service`** | **8114** | **✅ Complete (NEW)** | **Marketplace: seller onboarding, product approval, payouts with commission calc, GST/PAN validation** |
 | **`fraud-service`** | **8117** | **✅ Complete (NEW)** | **Pluggable rule engine (8 built-in rules), blocklist, auto-evaluation on order.created** |
 | **`admin-service`** | **8115** | **✅ Complete (NEW)** | **Audit log + cross-service aggregator (Feign clients to user/order/fraud/seller)** |
-| `search-service` | 8103 | 🟡 Stub | Needs Elasticsearch + indexing |
-| `recommendation-service` | 8104 | 🟡 Stub | Needs ML pipeline |
-| `analytics-service` | 8116 | 🟡 Stub | Needs Kafka→DW pipeline |
-| `support-service` | 8119 | 🟡 Stub | Tickets + chat |
 
 **209 Java files. 304 total files.**
 
@@ -124,9 +118,6 @@ open http://localhost:8761    # Watch services register
 5. **7 of 22 services still stubs.** Remaining: search, recommendation, analytics, support. These are mostly vendor-SDK shaped (Elasticsearch, ML platforms, BI pipelines) rather than CRUD work.
 
 ---
-
-## What to do with Claude Code from here
-
 1. **First compile** — `mvn compile` in each service to find any import nits and fix them
 2. **Add the missing demo seeding endpoints** (e.g. `POST /api/inventory/stock` to create stock rows directly, V2 Flyway migrations with sample products/stock)
 3. **Wire the gating** — make order-service consume `fraud.decision` and hold orders flagged as REVIEW/BLOCK
