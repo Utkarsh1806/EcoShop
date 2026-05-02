@@ -1,0 +1,203 @@
+# EcoShop — local dev infrastructure + services
+# Run: docker compose up -d
+version: "3.9"
+
+x-common-env: &common-env
+  EUREKA_URL: http://eureka:8761/eureka/
+  CONFIG_SERVER_URL: http://config-server:8888
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  KAFKA_BROKERS: kafka:9092
+  ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_USER: ecoshop
+  DB_PASSWORD: ecoshop
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ecoshop
+      POSTGRES_PASSWORD: ecoshop
+      POSTGRES_MULTIPLE_DATABASES: ecoshop_user,ecoshop_catalog,ecoshop_search,ecoshop_reco,ecoshop_inventory,ecoshop_cart,ecoshop_checkout,ecoshop_order,ecoshop_payment,ecoshop_shipping,ecoshop_pricing,ecoshop_review,ecoshop_notification,ecoshop_seller,ecoshop_admin,ecoshop_analytics,ecoshop_fraud,ecoshop_returns,ecoshop_support
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init-multi-db.sh:/docker-entrypoint-initdb.d/init.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecoshop"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    depends_on: [zookeeper]
+    ports: ["9092:9092"]
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    ports: ["9411:9411"]
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./scripts/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports: ["9090:9090"]
+
+  grafana:
+    image: grafana/grafana:latest
+    ports: ["3000:3000"]
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+
+  eureka:
+    build: ./infra-eureka-server
+    ports: ["8761:8761"]
+    depends_on: [postgres]
+
+  config-server:
+    build: ./infra-config-server
+    environment: *common-env
+    ports: ["8888:8888"]
+    depends_on: [eureka]
+
+  api-gateway:
+    build: ./infra-api-gateway
+    environment: *common-env
+    ports: ["8080:8080"]
+    depends_on: [eureka, config-server, redis]
+
+  user-service:
+    build: ./user-service
+    environment: *common-env
+    ports: ["8101:8101"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  product-catalog-service:
+    build: ./product-catalog-service
+    environment: *common-env
+    ports: ["8102:8102"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  search-service:
+    build: ./search-service
+    environment: *common-env
+    ports: ["8103:8103"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  recommendation-service:
+    build: ./recommendation-service
+    environment: *common-env
+    ports: ["8104:8104"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  inventory-service:
+    build: ./inventory-service
+    environment: *common-env
+    ports: ["8105:8105"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  cart-service:
+    build: ./cart-service
+    environment: *common-env
+    ports: ["8106:8106"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  checkout-service:
+    build: ./checkout-service
+    environment: *common-env
+    ports: ["8107:8107"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  order-service:
+    build: ./order-service
+    environment: *common-env
+    ports: ["8108:8108"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  payment-service:
+    build: ./payment-service
+    environment: *common-env
+    ports: ["8109:8109"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  shipping-service:
+    build: ./shipping-service
+    environment: *common-env
+    ports: ["8110:8110"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  pricing-promotion-service:
+    build: ./pricing-promotion-service
+    environment: *common-env
+    ports: ["8111:8111"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  review-rating-service:
+    build: ./review-rating-service
+    environment: *common-env
+    ports: ["8112:8112"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  notification-service:
+    build: ./notification-service
+    environment: *common-env
+    ports: ["8113:8113"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  seller-service:
+    build: ./seller-service
+    environment: *common-env
+    ports: ["8114:8114"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  admin-service:
+    build: ./admin-service
+    environment: *common-env
+    ports: ["8115:8115"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  analytics-service:
+    build: ./analytics-service
+    environment: *common-env
+    ports: ["8116:8116"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  fraud-service:
+    build: ./fraud-service
+    environment: *common-env
+    ports: ["8117:8117"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  returns-service:
+    build: ./returns-service
+    environment: *common-env
+    ports: ["8118:8118"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+  support-service:
+    build: ./support-service
+    environment: *common-env
+    ports: ["8119:8119"]
+    depends_on: [postgres, kafka, redis, eureka, config-server]
+
+volumes:
+  pgdata:

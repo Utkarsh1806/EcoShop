@@ -1,0 +1,62 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: infra-api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 50
+            redis-rate-limiter.burstCapacity: 100
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**, /api/auth/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userCB
+                fallbackUri: forward:/fallback
+        - id: product-catalog
+          uri: lb://product-catalog-service
+          predicates:
+            - Path=/api/products/**, /api/categories/**, /api/brands/**
+        - id: search
+          uri: lb://search-service
+          predicates:
+            - Path=/api/search/**
+        - id: cart
+          uri: lb://cart-service
+          predicates:
+            - Path=/api/cart/**
+        - id: checkout
+          uri: lb://checkout-service
+          predicates:
+            - Path=/api/checkout/**
+        - id: order
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+        - id: payment
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+        - id: inventory
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
