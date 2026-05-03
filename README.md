@@ -27,8 +27,6 @@ A microservices-based e-commerce platform I've been building to learn distribute
 | `fraud-service` | 8117 | ✅ | Rule engine, blocklist, auto-eval on order.created |
 | `admin-service` | 8115 | ✅ | Audit log, cross-service aggregator |
 
-**~209 Java files across 18 services.**
-
 ---
 
 ## How to run
